@@ -25,20 +25,25 @@ output.data = zeros([h_out*w_out*c, batch_size]);
 
 %% for each datum in the minibatch, find output
 for b = 1 : batch_size
-    image_in = reshape(input.data(:, b), [h_in, w_in, c_in]);
-    image_out = zeros([h_out, w_out, c_out]);
-    % for each output channel
-    for c = 1 : c_out
-        image_channel = zeros([h_out, w_out]);
-        %% TODO, pooling
+    image_in = reshape(input.data(:, b), [h_in, w_in, c]);
+    %% TODO add padding to imput image
+    image_in_pad = zeros([h_in + 2 * pad, w_in + 2 * pad, c]);
+    image_in_pad(pad+1:pad+h_in, pad+1:pad+w_in, :) = image_in;
+    
+    image_out = zeros([h_out, w_out, c]);
+    %% TODO, max pooling
+    for ic = 1 : c
         for h = 1 : h_out
             for w = 1 : w_out
-                image_channel(h, w) = 
+                y = 0;
+                for ki = 1 : k
+                    for kj = 1 : k
+                        y = max(y, image_in_pad(stride*(h-1) + (ki-1) + 1, stride*(w-1) + (kj-1) + 1, ic));
+                    end
+                end
+                image_out(h, w, ic) = y;
             end
         end
-        
-        %%
-        image_out(:, :, c) = image_channel;
     end
     output.data(:, b) = image_out(:);
 end
