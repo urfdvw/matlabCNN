@@ -35,6 +35,8 @@ function layers = get_lenet()
     layers{7}.stride = 2;
     layers{7}.pad = 0;
 
+    % because image size info are lost in IP layer
+    % no CONV layer after IP layer
     layers{8}.type = 'IP';
     layers{8}.num = 500;
     layers{8}.init_type = 'uniform';

@@ -48,7 +48,7 @@ else
     load lenet_pretrained.mat
 end
 
-% prepare memory of each layer catch for momentum
+%% prepare memory cache of each layer catch for momentum
 param_winc = params;
 for l_idx = 1:length(layers)-1
     param_winc{l_idx}.w = zeros(size(param_winc{l_idx}.w));
@@ -79,8 +79,10 @@ for iter = 1 : max_iter
     x_batch = xtrain(:, curr_batch:(curr_batch+batch_size-1));
     y_batch = ytrain(:, curr_batch:(curr_batch+batch_size-1));
     curr_batch = curr_batch + batch_size; % update position of curr_batch
+    
     %% forward and backward propogation
     [cp, param_grad] = conv_net(params, layers, x_batch, y_batch);
+    
     %% SGD parameter update
     for l_idx = 1:length(layers)-1
         % We have different epsilons for w and b. Calling get_lr and sgd_momentum twice.
